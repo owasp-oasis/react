@@ -33,6 +33,10 @@ export function alphaSortEntries(
 }
 
 export function createRegExp(string: string): RegExp {
+  // Limit input length to prevent ReDoS from long inputs
+  if (string.length > 512) {
+    return new RegExp('.^');
+  }
   // Allow /regex/ syntax with optional last /
   if (string[0] === '/') {
     // Cut off first slash
