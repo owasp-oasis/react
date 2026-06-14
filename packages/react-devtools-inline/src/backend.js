@@ -104,7 +104,7 @@ export function createBridge(contentWindow: any, wall?: Wall): BackendBridge {
         };
       },
       send(event: string, payload: any, transferable?: Array<any>) {
-        parent.postMessage({event, payload}, '*', transferable);
+        parent.postMessage({event, payload}, contentWindow.location.origin, transferable);
       },
     };
   }
