@@ -90,7 +90,10 @@ export function findProgramSuppressions(
   let disablePattern: RegExp | null = null;
   let enablePattern: RegExp | null = null;
   if (ruleNames != null && ruleNames.length !== 0) {
-    const rulePattern = `(${ruleNames.join('|')})`;
+    const escapedNames = ruleNames.map(name =>
+      name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    );
+    const rulePattern = `(${escapedNames.join('|')})`;
     disableNextLinePattern = new RegExp(
       `eslint-disable-next-line ${rulePattern}`,
     );
