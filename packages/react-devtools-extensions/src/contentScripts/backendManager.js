@@ -195,7 +195,7 @@ function updateRequiredBackends() {
         versions: Array.from(requiredBackends),
       },
     },
-    '*',
+    window.location.origin,
   );
 }
 
