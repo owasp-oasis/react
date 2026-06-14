@@ -41,6 +41,9 @@ export function createRegExp(string: string): RegExp {
     if (string[string.length - 1] === '/') {
       string = string.slice(0, string.length - 1);
     }
+    if (string.length > 512) {
+      return new RegExp('.^');
+    }
     try {
       return new RegExp(string, 'i');
     } catch (err) {
