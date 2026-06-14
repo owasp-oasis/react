@@ -639,6 +639,9 @@ export function attach(
   function mergeInspectedPaths(path: Array<string | number>) {
     let current = currentlyInspectedPaths;
     path.forEach(key => {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return;
+      }
       if (!current[key]) {
         current[key] = {};
       }
@@ -655,7 +658,15 @@ export function attach(
         return false;
       }
       for (let i = 0; i < path.length; i++) {
-        current = current[path[i]];
+        const segment = path[i];
+        if (
+          segment === '__proto__' ||
+          segment === 'constructor' ||
+          segment === 'prototype'
+        ) {
+          return false;
+        }
+        current = current[segment];
         if (!current) {
           return false;
         }
