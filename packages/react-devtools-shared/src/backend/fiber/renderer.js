@@ -871,9 +871,11 @@ export function attach(
       switch (componentFilter.type) {
         case ComponentFilterDisplayName:
           if (componentFilter.isValid && componentFilter.value !== '') {
-            hideElementsWithDisplayNames.add(
-              new RegExp(componentFilter.value, 'i'),
-            );
+            if (componentFilter.value.length <= 512) {
+              hideElementsWithDisplayNames.add(
+                new RegExp(componentFilter.value, 'i'),
+              );
+            }
           }
           break;
         case ComponentFilterElementType:
@@ -881,7 +883,11 @@ export function attach(
           break;
         case ComponentFilterLocation:
           if (componentFilter.isValid && componentFilter.value !== '') {
-            hideElementsWithPaths.add(new RegExp(componentFilter.value, 'i'));
+            if (componentFilter.value.length <= 512) {
+              hideElementsWithPaths.add(
+                new RegExp(componentFilter.value, 'i'),
+              );
+            }
           }
           break;
         case ComponentFilterHOC:
