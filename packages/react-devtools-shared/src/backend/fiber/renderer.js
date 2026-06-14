@@ -6790,13 +6790,22 @@ export function attach(
         console.error(message + '\n\n', error);
         if (error.cause != null) {
           const componentName = getDisplayNameForElementID(id);
-          console.error(
-            'React DevTools encountered an error while trying to inspect hooks. ' +
-              'This is most likely caused by an error in current inspected component' +
-              (componentName != null ? `: "${componentName}".` : '.') +
-              '\nThe error thrown in the component is: \n\n',
-            error.cause,
-          );
+          if (componentName != null) {
+            console.error(
+              'React DevTools encountered an error while trying to inspect hooks. ' +
+                'This is most likely caused by an error in current inspected component: "%s".' +
+                '\nThe error thrown in the component is: \n\n',
+              componentName,
+              error.cause,
+            );
+          } else {
+            console.error(
+              'React DevTools encountered an error while trying to inspect hooks. ' +
+                'This is most likely caused by an error in current inspected component.' +
+                '\nThe error thrown in the component is: \n\n',
+              error.cause,
+            );
+          }
           if (error.cause instanceof Error) {
             message = error.cause.message || message;
             stack = error.cause.stack;
