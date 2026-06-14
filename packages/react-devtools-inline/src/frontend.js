@@ -35,7 +35,7 @@ export function createBridge(contentWindow: any, wall?: Wall): FrontendBridge {
         };
       },
       send(event: string, payload: any, transferable?: Array<any>) {
-        contentWindow.postMessage({event, payload}, '*', transferable);
+        contentWindow.postMessage({event, payload}, window.location.origin, transferable);
       },
     };
   }
