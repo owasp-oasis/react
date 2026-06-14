@@ -67,7 +67,7 @@ function sayHelloToBackendManager() {
       source: 'react-devtools-content-script',
       hello: true,
     },
-    '*',
+    window.location.origin,
   );
 }
 
@@ -77,7 +77,7 @@ function handleMessageFromDevtools(message: any) {
       source: 'react-devtools-content-script',
       payload: message,
     },
-    '*',
+    window.location.origin,
   );
 }
 
@@ -149,7 +149,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             args,
           },
         },
-        '*',
+        window.location.origin,
       );
       evalRequestCallbacks.set(requestId, sendResponse);
       return true; // Indicate we will respond asynchronously
