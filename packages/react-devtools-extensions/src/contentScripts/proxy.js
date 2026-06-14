@@ -149,7 +149,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             args,
           },
         },
-        '*',
+        window.location.origin,
       );
       evalRequestCallbacks.set(requestId, sendResponse);
       return true; // Indicate we will respond asynchronously
