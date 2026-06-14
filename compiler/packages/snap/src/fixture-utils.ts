@@ -94,11 +94,15 @@ async function readInputFixtures(
       )
     ).flat();
   }
+  const resolvedRoot = path.resolve(rootDir);
   const inputs: Array<Promise<[string, {value: string; filepath: string}]>> =
     [];
   for (const filePath of inputFiles) {
     // Do not include extensions in unique identifier for fixture
     const partialPath = stripExtension(filePath, INPUT_EXTENSIONS);
+    if (!path.resolve(rootDir, filePath).startsWith(resolvedRoot + path.sep)) {
+      continue;
+    }
     inputs.push(
       fs.readFile(path.join(rootDir, filePath), 'utf8').then(input => {
         return [
@@ -138,12 +142,16 @@ async function readOutputFixtures(
       )
     ).flat();
   }
+  const resolvedRoot = path.resolve(rootDir);
   const outputs: Array<Promise<[string, string]>> = [];
   for (const filePath of outputFiles) {
     // Do not include extensions in unique identifier for fixture
     const partialPath = stripExtension(filePath, [SNAPSHOT_EXTENSION]);
 
     const outputPath = path.join(rootDir, filePath);
+    if (!path.resolve(rootDir, filePath).startsWith(resolvedRoot + path.sep)) {
+      continue;
+    }
     const output: Promise<[string, string]> = fs
       .readFile(outputPath, 'utf8')
       .then(output => {
