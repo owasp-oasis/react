@@ -60,7 +60,7 @@ class Hydration extends React.Component {
 
   send = message => {
     if (this.ready) {
-      this.frame.contentWindow.postMessage(JSON.stringify(message), window.location.origin);
+      this.frame.contentWindow.postMessage(JSON.stringify(message), '*');
     }
   };
 
