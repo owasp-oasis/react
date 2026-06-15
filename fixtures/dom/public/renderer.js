@@ -195,7 +195,7 @@
         }
       });
 
-      window.parent.postMessage(JSON.stringify({type: 'ready'}), window.location.origin);
+      window.parent.postMessage(JSON.stringify({type: 'ready'}), '*');
     })
     .catch(handleError);
 })();
