@@ -8,7 +8,7 @@
  */
 
 import {existsSync} from 'fs';
-import {basename, join, isAbsolute} from 'path';
+import {basename, join, isAbsolute, resolve, relative} from 'path';
 import {execSync, spawn} from 'child_process';
 import {parse} from 'shell-quote';
 
@@ -123,7 +123,11 @@ export function getValidFilePath(
   } else {
     for (let i = 0; i < absoluteProjectRoots.length; i++) {
       const projectRoot = absoluteProjectRoots[i];
-      const joinedPath = join(projectRoot, maybeRelativePath);
+      const joinedPath = resolve(projectRoot, maybeRelativePath);
+      const rel = relative(projectRoot, joinedPath);
+      if (rel.startsWith('..') || isAbsolute(rel)) {
+        continue;
+      }
       if (existsSync(joinedPath)) {
         return joinedPath;
       }
