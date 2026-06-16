@@ -79,10 +79,18 @@ function discoverFixtures(rootPath: string): string[] {
     return [rootPath];
   }
 
+  const canonicalRoot = path.resolve(rootPath);
   const results: string[] = [];
   function walk(dir: string): void {
     for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
       const fullPath = path.join(dir, entry.name);
+      const resolvedFull = path.resolve(fullPath);
+      if (
+        resolvedFull !== canonicalRoot &&
+        !resolvedFull.startsWith(canonicalRoot + path.sep)
+      ) {
+        continue;
+      }
       if (entry.isDirectory()) {
         walk(fullPath);
       } else if (
