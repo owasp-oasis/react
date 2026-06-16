@@ -14,6 +14,7 @@ import {enableLogger} from 'react-devtools-feature-flags';
 
 let currentLoggingIFrame = null;
 let currentSessionId = null;
+let currentLoggingOrigin: string | null = null;
 let missedEvents: Array<LoggerEvent> = [];
 
 type LoggerContext = {
@@ -45,7 +46,7 @@ export function registerDevToolsEventLogger(
               version: process.env.DEVTOOLS_VERSION,
             },
           },
-          '*',
+          currentLoggingOrigin ?? '*',
         );
       } else {
         missedEvents.push(event);
@@ -76,6 +77,11 @@ export function registerDevToolsEventLogger(
     ) {
       registerEventLogger(logEvent);
       currentSessionId = window.crypto.randomUUID();
+      try {
+        currentLoggingOrigin = new URL(loggingUrl).origin;
+      } catch (e) {
+        currentLoggingOrigin = null;
+      }
 
       const iframe = document.createElement('iframe');
 
