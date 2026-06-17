@@ -110,20 +110,26 @@ class App extends Component {
         }));
       },
     };
-    window.React = React;
-    window.ReactNoop = ReactNoop;
-    window.expect = () => ({
+    const sandbox = document.createElement('iframe');
+    sandbox.setAttribute('sandbox', 'allow-scripts');
+    sandbox.style.display = 'none';
+    document.body.appendChild(sandbox);
+    const sandboxWindow = sandbox.contentWindow;
+    sandboxWindow.React = React;
+    sandboxWindow.ReactNoop = ReactNoop;
+    sandboxWindow.expect = () => ({
       toBe() {},
       toContain() {},
       toEqual() {},
     });
-    window.log = s => (currentStage = s);
+    sandboxWindow.log = s => (currentStage = s);
     // eslint-disable-next-line
-    eval(
+    sandboxWindow.eval(
       window.Babel.transform(code, {
         presets: ['react', 'es2015'],
       }).code
     );
+    document.body.removeChild(sandbox);
   }
 
   handleEdit = e => {
