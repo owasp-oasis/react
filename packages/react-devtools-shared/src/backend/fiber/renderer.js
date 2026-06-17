@@ -6999,9 +6999,10 @@ export function attach(
     const supportsGroup = typeof console.groupCollapsed === 'function';
     if (supportsGroup) {
       console.groupCollapsed(
-        `[Click to expand] %c<${displayName || 'Component'} />`,
+        '[Click to expand] %c<%s />',
         // --dom-tag-name-color is the CSS variable Chrome styles HTML elements with in the console.
         'color: var(--dom-tag-name-color); font-weight: normal;',
+        displayName || 'Component',
       );
     }
     if (result.props !== null) {
