@@ -29,7 +29,7 @@ window.addEventListener('message', event => {
           response,
         },
       },
-      '*',
+      window.location.origin,
     );
   }
 });
