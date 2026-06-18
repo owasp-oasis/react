@@ -6,7 +6,8 @@ require('@babel/register')({
   only: [/\/src\//],
 });
 
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const {Readable} = require('stream');
 const webpack = require('webpack');
 
@@ -171,7 +172,12 @@ async function main() {
     },
   };
 
-  const server = http.createServer(function (req, res) {
+  const tlsOptions = {
+    key: fs.readFileSync(process.env.TLS_KEY_PATH || 'server.key'),
+    cert: fs.readFileSync(process.env.TLS_CERT_PATH || 'server.cert'),
+  };
+
+  const server = https.createServer(tlsOptions, function (req, res) {
     const handler = routes[req.url];
     if (!handler) {
       if (req.url === '/' || req.url === '') {
@@ -202,10 +208,10 @@ async function main() {
     server.listen(PORT, resolve);
   });
 
-  console.log('\nServer listening on http://localhost:%d', PORT);
+  console.log('\nServer listening on https://localhost:%d', PORT);
   console.log('Endpoints:');
   for (const route of Object.keys(routes)) {
-    console.log('  http://localhost:%d%s', PORT, route);
+    console.log('  https://localhost:%d%s', PORT, route);
   }
 
   if (!process.argv.includes('--bench')) {
@@ -222,7 +228,7 @@ async function main() {
 
   function runAutocannon(benchUrl, connections, amount) {
     return new Promise(function (resolve, reject) {
-      const instance = autocannon({url: benchUrl, connections, amount});
+      const instance = autocannon({url: benchUrl, connections, amount, ca: tlsOptions.cert});
       autocannon.track(instance, {
         renderProgressBar: false,
         renderResultsTable: false,
@@ -263,7 +269,7 @@ async function main() {
 
     for (const route of benchRoutes) {
       const label = route.slice(1);
-      const benchUrl = 'http://localhost:' + PORT + route;
+      const benchUrl = 'https://localhost:' + PORT + route;
 
       // Warmup
       await runAutocannon(benchUrl, c, WARMUP_AMOUNT);
