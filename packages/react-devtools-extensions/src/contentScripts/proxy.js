@@ -158,6 +158,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 window.addEventListener('message', event => {
+  if (event.source !== window || !event.data) {
+    return;
+  }
   if (event.data?.source === 'react-devtools-content-script-eval-response') {
     const {requestId, response} = event.data.payload;
     const callback = evalRequestCallbacks.get(requestId);
