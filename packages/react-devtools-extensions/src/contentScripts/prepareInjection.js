@@ -8,8 +8,8 @@ let lastSentDevToolsHookMessage;
 // (it will be injected directly into the page).
 // So instead, the hook will use postMessage() to pass message to us here.
 // And when this happens, we'll send a message to the "background page".
-window.addEventListener('message', function onMessage({data, source}) {
-  if (source !== window || !data) {
+window.addEventListener('message', function onMessage({data, source, origin}) {
+  if (source !== window || !data || origin !== window.location.origin) {
     return;
   }
 
