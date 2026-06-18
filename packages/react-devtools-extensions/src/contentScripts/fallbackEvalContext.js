@@ -10,6 +10,9 @@
 import {evalScripts} from '../evalScripts';
 
 window.addEventListener('message', event => {
+  if (event.origin !== window.location.origin) {
+    return;
+  }
   if (event.data?.source === 'react-devtools-content-script-eval') {
     const {scriptId, args, requestId} = event.data.payload;
     const response = {result: null, error: null};
@@ -29,7 +32,7 @@ window.addEventListener('message', event => {
           response,
         },
       },
-      '*',
+      window.location.origin,
     );
   }
 });
