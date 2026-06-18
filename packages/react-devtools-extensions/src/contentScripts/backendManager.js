@@ -139,7 +139,7 @@ function activateBackend(version: string, hook: DevToolsHook) {
           source: 'react-devtools-bridge',
           payload: {event, payload},
         },
-        '*',
+        window.location.origin,
         transferable,
       );
     },
@@ -195,7 +195,7 @@ function updateRequiredBackends() {
         versions: Array.from(requiredBackends),
       },
     },
-    '*',
+    window.location.origin,
   );
 }
 
