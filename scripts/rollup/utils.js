@@ -76,9 +76,23 @@ function asyncRimRaf(filepath) {
 
 function resolvePath(filepath) {
   if (filepath[0] === '~') {
-    return path.join(process.env.HOME, filepath.slice(1));
+    const home = process.env.HOME;
+    const resolved = path.join(home, filepath.slice(1));
+    const relative = path.relative(home, resolved);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      return home;
+    }
+    return resolved;
   } else {
-    return path.resolve(filepath);
+    const resolved = path.resolve(filepath);
+    if (!path.isAbsolute(filepath)) {
+      const base = process.cwd();
+      const relative = path.relative(base, resolved);
+      if (relative.startsWith('..') || path.isAbsolute(relative)) {
+        return base;
+      }
+    }
+    return resolved;
   }
 }
 
