@@ -76,7 +76,13 @@ function asyncRimRaf(filepath) {
 
 function resolvePath(filepath) {
   if (filepath[0] === '~') {
-    return path.join(process.env.HOME, filepath.slice(1));
+    const home = process.env.HOME;
+    const resolved = path.resolve(home, filepath.slice(1));
+    const relative = path.relative(home, resolved);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      return '';
+    }
+    return resolved;
   } else {
     return path.resolve(filepath);
   }
