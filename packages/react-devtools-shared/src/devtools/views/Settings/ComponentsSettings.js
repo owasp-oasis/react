@@ -220,10 +220,14 @@ export default function ComponentsSettings({
           const index = prevComponentFilters.indexOf(componentFilter);
           if (index >= 0) {
             let isValid = true;
-            try {
-              new RegExp(value); // eslint-disable-line no-new
-            } catch (error) {
+            if (value.length > 512) {
               isValid = false;
+            } else {
+              try {
+                new RegExp(value); // eslint-disable-line no-new
+              } catch (error) {
+                isValid = false;
+              }
             }
             cloned[index] = {
               ...componentFilter,
