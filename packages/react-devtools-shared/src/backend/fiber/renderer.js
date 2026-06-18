@@ -6575,6 +6575,9 @@ export function attach(
   function mergeInspectedPaths(path: Array<string | number>) {
     let current = currentlyInspectedPaths;
     path.forEach(key => {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return;
+      }
       if (!current[key]) {
         current[key] = {};
       }
