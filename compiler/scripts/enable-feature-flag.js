@@ -156,7 +156,12 @@ function parseFailingTests(output) {
  * Find the fixture file for a given test name
  */
 function findFixtureFile(testName) {
-  const basePath = path.join(FIXTURES_PATH, testName);
+  const resolvedFixtures = path.resolve(FIXTURES_PATH);
+  const basePath = path.resolve(FIXTURES_PATH, testName);
+
+  if (!basePath.startsWith(resolvedFixtures + path.sep)) {
+    return null;
+  }
 
   for (const ext of FIXTURE_EXTENSIONS) {
     const filePath = basePath + ext;
