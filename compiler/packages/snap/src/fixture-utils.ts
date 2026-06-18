@@ -96,11 +96,16 @@ async function readInputFixtures(
   }
   const inputs: Array<Promise<[string, {value: string; filepath: string}]>> =
     [];
+  const resolvedInputRoot = path.resolve(rootDir);
   for (const filePath of inputFiles) {
     // Do not include extensions in unique identifier for fixture
     const partialPath = stripExtension(filePath, INPUT_EXTENSIONS);
+    const resolvedInputPath = path.resolve(resolvedInputRoot, filePath);
+    if (!resolvedInputPath.startsWith(resolvedInputRoot + path.sep)) {
+      continue;
+    }
     inputs.push(
-      fs.readFile(path.join(rootDir, filePath), 'utf8').then(input => {
+      fs.readFile(resolvedInputPath, 'utf8').then(input => {
         return [
           partialPath,
           {
@@ -143,7 +148,11 @@ async function readOutputFixtures(
     // Do not include extensions in unique identifier for fixture
     const partialPath = stripExtension(filePath, [SNAPSHOT_EXTENSION]);
 
-    const outputPath = path.join(rootDir, filePath);
+    const resolvedRoot = path.resolve(rootDir);
+    const outputPath = path.resolve(resolvedRoot, filePath);
+    if (!outputPath.startsWith(resolvedRoot + path.sep)) {
+      continue;
+    }
     const output: Promise<[string, string]> = fs
       .readFile(outputPath, 'utf8')
       .then(output => {
@@ -161,26 +170,40 @@ export async function getFixtures(
   const outputs = await readOutputFixtures(FIXTURES_PATH, filter);
 
   const fixtures: Map<string, TestFixture> = new Map();
+  const resolvedFixturesBase = path.resolve(FIXTURES_PATH);
   for (const [partialPath, {value, filepath}] of inputs) {
     const output = outputs.get(partialPath) ?? null;
+    const resolvedSnapshotPath = path.resolve(
+      resolvedFixturesBase,
+      partialPath + SNAPSHOT_EXTENSION,
+    );
+    if (!resolvedSnapshotPath.startsWith(resolvedFixturesBase + path.sep)) {
+      continue;
+    }
     fixtures.set(partialPath, {
       fixturePath: partialPath,
       input: value,
       inputPath: filepath,
       snapshot: output,
-      snapshotPath: path.join(FIXTURES_PATH, partialPath) + SNAPSHOT_EXTENSION,
+      snapshotPath: resolvedSnapshotPath,
     });
   }
 
   for (const [partialPath, output] of outputs) {
     if (!fixtures.has(partialPath)) {
+      const resolvedSnapshotPath = path.resolve(
+        resolvedFixturesBase,
+        partialPath + SNAPSHOT_EXTENSION,
+      );
+      if (!resolvedSnapshotPath.startsWith(resolvedFixturesBase + path.sep)) {
+        continue;
+      }
       fixtures.set(partialPath, {
         fixturePath: partialPath,
         input: null,
         inputPath: 'none',
         snapshot: output,
-        snapshotPath:
-          path.join(FIXTURES_PATH, partialPath) + SNAPSHOT_EXTENSION,
+        snapshotPath: resolvedSnapshotPath,
       });
     }
   }
