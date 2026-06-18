@@ -2135,7 +2135,16 @@ function getOutlinedModel<T>(
             }
           }
         }
-        value = value[path[i]];
+        const pathKey = path[i];
+        if (
+          pathKey === '__proto__' ||
+          pathKey === 'constructor' ||
+          pathKey === 'prototype'
+        ) {
+          value = undefined;
+        } else {
+          value = value[pathKey];
+        }
       }
 
       while (
